@@ -14,10 +14,10 @@ Vue.component('department-member', {
           </div>`,
     methods: {
         removeMember: function (index) {
-            app.dpList.splice(index, 1)
+            membersSettings.dpList.splice(index, 1)
         },
         editMember: function (member, index) {
-            app.dpList[index] = member
+            membersSettings.dpList[index] = member
         }
     }
 });
