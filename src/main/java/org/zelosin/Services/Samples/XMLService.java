@@ -52,7 +52,7 @@ public class XMLService{
                     getResourceAsStream(pConfigName != null ? pConfigName : "/resources/SampleQueryConfiguration.xml");
             if (mQueryFileStream == null) {
                 mQueryFileStream = XMLService.class.
-                        getClassLoader().getResourceAsStream(pConfigName != null ? pConfigName : "templates/SampleQueryConfiguration.xml");
+                        getClassLoader().getResourceAsStream(pConfigName != null ? pConfigName : "SampleQueryConfiguration.xml");
             }
         }
     }

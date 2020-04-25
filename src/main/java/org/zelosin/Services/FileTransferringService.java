@@ -24,7 +24,7 @@ public class FileTransferringService {
 
 
         if(is == null) {
-            is = FileTransferringService.class.getClassLoader().getResourceAsStream("templates/SampleQueryConfiguration.xml");
+            is = FileTransferringService.class.getClassLoader().getResourceAsStream("SampleQueryConfiguration.xml");
         }
 
         HttpHeaders headers = new HttpHeaders();
