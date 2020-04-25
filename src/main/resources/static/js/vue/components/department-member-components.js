@@ -21,32 +21,3 @@ Vue.component('department-member', {
         }
     }
 });
-
-
-app = new Vue({
-    el: '#departmentMemberField',
-    data: {
-        dpList: []
-    },
-    beforeCreate: function () {
-        fetch('http://localhost:8080/provider?type=members')
-            .then(response =>{
-                return response.json();
-            })
-            .then(members =>{
-                this.dpList = members;
-                console.log(this.dpList[0])
-            })
-    },
-    methods: {
-        addMember: function () {
-            app.dpList.push("")
-        },
-        sendMembersList: function () {
-            fetch("http://localhost:8080/provider?type=members", {
-                method : 'post',
-                body: JSON.stringify(this.dpList)
-            })
-        }
-    },
-});
