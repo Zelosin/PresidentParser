@@ -26,7 +26,6 @@ public class FileManipulationController {
 
         if(callType.equals("sample")){
             try {
-                System.out.println("controller was called");
                 return FileTransferringService.processingEntityToFileToDownload();
             } catch (IOException e) {
                 e.printStackTrace();

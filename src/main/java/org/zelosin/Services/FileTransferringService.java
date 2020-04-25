@@ -18,6 +18,7 @@ public class FileTransferringService {
     private static final long TEMPLATE_SIZE = 19032;
 
     public static synchronized ResponseEntity<Object> processingEntityToFileToDownload() throws IOException {
+
         InputStream is = FileTransferringService.class.
                 getResourceAsStream("/resources/SampleQueryConfiguration.xml");
 
@@ -33,9 +34,9 @@ public class FileTransferringService {
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(TEMPLATE_SIZE)
-                .contentType(MediaType.TEXT_HTML)
+                .contentType(MediaType.APPLICATION_XML)
                 .body(new InputStreamResource(is));
-    }
+}
 
     public static synchronized ResponseEntity<Object> processingEntityToFileToDownload(ByteArrayOutputStream pBao, String pFileName){
 
