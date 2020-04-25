@@ -18,26 +18,22 @@ public class FileTransferringService {
     private static final long TEMPLATE_SIZE = 19032;
 
     public static synchronized ResponseEntity<Object> processingEntityToFileToDownload() throws IOException {
-        System.out.println("1");
         InputStream is = FileTransferringService.class.
                 getResourceAsStream("/resources/SampleQueryConfiguration.xml");
 
-        System.out.println("2" + is);
         if(is == null) {
             is = FileTransferringService.class.getClassLoader().getResourceAsStream("SampleQueryConfiguration.xml");
         }
-        System.out.println("3" + is);
         HttpHeaders headers = new HttpHeaders();
 
         headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", "template.xml"));
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
-        System.out.println("defore response");
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(TEMPLATE_SIZE)
-                .contentType(MediaType.APPLICATION_XML)
+                .contentType(MediaType.TEXT_HTML)
                 .body(new InputStreamResource(is));
     }
 
