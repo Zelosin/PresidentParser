@@ -22,11 +22,11 @@ public class FileTransferringService {
         InputStream is = FileTransferringService.class.
                 getResourceAsStream("/resources/SampleQueryConfiguration.xml");
 
-        System.out.println("2");
+        System.out.println("2" + is);
         if(is == null) {
             is = FileTransferringService.class.getClassLoader().getResourceAsStream("SampleQueryConfiguration.xml");
         }
-        System.out.println("3");
+        System.out.println("3" + is);
         HttpHeaders headers = new HttpHeaders();
 
         headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", "Образец конфигурационного файла.xml"));
