@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="processingRequestSettings" class="card-body text-left tab-pane fade show" id="nav-processing-request" role="tabpanel" aria-labelledby="nav-request-tab">
+
+    <div id = "processingRequestSettings">
+
+        <div class="form-row mt-2">
+            <div class="form-group col-md-4">
+                <div class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" id="queryRadio" name="systemAction" value="query" v-model="dQueryAction">
+                    <label class="custom-control-label ml-1" for="queryRadio">Осуществить только запрос данных</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" id="parseRadio" name="systemAction" value="parse" v-model="dQueryAction">
+                    <label class="custom-control-label ml-1" for="parseRadio">Осуществить только обработку данных</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" id="basicRadio" name="systemAction" value="basic" v-model="dQueryAction">
+                    <label class="custom-control-label ml-1" for="basicRadio">Весь цикл</label>
+                </div>
+
+            </div>
+
+        </div>
+        <button class="btn btn-primary" @click="sendProcessingRequest">Отправить запрос</button>
+
+</div>
+</body>

@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+  <head>
+    <title>Test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  </head>
+  <body>
+
+  <div th:insert="navbar :: primeNavbar"></div>
+
+  <div th:insert="core/modal/server-response-window :: serverResponseModal"></div>
+  <!-- PrimaryTabview -->
+    <div class = "card container mt-5">
+
+      <nav class = "card text-center container bg-light mt-3 mb-6">
+        <div class="nav nav-pills card-header-pills nav-tabs" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active m-1" id="nav-file-tab" data-toggle="tab" href="#nav-file" role="tab" aria-controls="nav-file" aria-selected="true">Добавление конфигурации</a>
+          <a class="nav-item nav-link m-1" id="nav-main-settigns-tab" data-toggle="tab" href="#nav-main-settigns" role="tab" aria-controls="nav-main-settigns" aria-selected="false">Главные настройки</a>
+          <a class="nav-item nav-link m-1" id="nav-profile-tab" data-toggle="tab" href="#nav-members" role="tab" aria-controls="nav-members" aria-selected="false">Список сотрудников</a>
+          <a class="nav-item nav-link m-1" id="nav-sheets-tab" data-toggle="tab" href="#nav-sheets" role="tab" aria-controls="nav-sheets" aria-selected="false">Данные таблиц</a>
+          <a class="nav-item nav-link m-1" id="nav-request-tab" data-toggle="tab" href="#nav-processing-request" role="tab" aria-controls="nav-processing-request" aria-selected="false">Обработка</a>
+        </div>
+      </nav>
+
+      <div class="tab-content container" id="nav-tabContent">
+
+        <div th:replace="core/processing-direct/file-settings :: fileTransferingSettings" />
+        <div th:replace="core/processing-direct/main-settings :: mainSettings"/>
+        <div th:replace="core/processing-direct/members-settings :: membersSettings"/>
+        <div th:replace="core/processing-direct/sheets-settings :: sheetsSettings"/>
+        <div th:replace="core/processing-direct/processing-request-settings :: processingRequestSettings"/>
+      </div>
+
+
+
+    </div>
+      <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script
+       <script type="text/javascript" src="https://www.turnjs.com/lib/turn.min.js "></script>
+
+  <th:block layout:fragment="script">
+
+      <script>
+          var data;
+
+          $('input[type="file"]').change(function(e){
+              data = new FormData();
+              data.append('file', e.target.files[0]);
+              data.append('user', 'hubot');
+              var fileName = e.target.files[0].name;
+              $('.custom-file-label').html(fileName);
+          });
+
+
+          modalWindow = new Vue({
+              el: '#serverResponse',
+              data:{
+                  serverResponse: ""
+              }
+          })
+
+        Vue.component('department-member', {
+          props: ['member', 'index'],
+          data: function () {
+            return {
+
+            }
+          },
+          template: `
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="ФИО Преподавателя" v-model = "member"  @change = "editMember(member, index)">
+            <div class="input-group-append">
+              <button class="btn btn-danger" @click="removeMember(index)" type="button">Удалить</button>
+            </div>
+          </div>`,
+          methods: {
+            removeMember: function (index) {
+              app.dpList.splice(index, 1)
+            },
+            editMember: function (member, index) {
+              app.dpList[index] = member
+            }
+          }
+        });
+
+
+        app = new Vue({
+          el: '#departmentMemberField',
+          data: {
+            dpList: [],
+          },
+          created: function () {
+            this.requestMembers()
+          },
+          methods: {
+            requestMembers: function(){
+              fetch('/provider?type=members')
+                      .then(response =>{
+                        if(response.status !== 204)
+                          return response.json();
+                        else
+                          return null;
+                      })
+                      .then(members =>{
+                        if(members != null) {
+                          if (members.members_list == null) {
+                            this.dpList = [""]
+                          } else {
+                            this.dpList = members.members_list;
+                          }
+                        }
+                      })
+            },
+            addMember: function () {
+              app.dpList.push("")
+            },
+            sendMembersList: function () {
+              fetch("/provider?type=members", {
+                method : 'post',
+                body: JSON.stringify({members_list : this.dpList})
+              }).then(response => {
+                if (response.status === 204) {
+                  $(document).ready(function () {
+                    modalWindow.serverResponse = "Не добавлен файл кофигурации.";
+                    $("#serverResponseModal").modal();
+                  });
+                }
+                if (response.status === 202) {
+                  $(document).ready(function () {
+                    modalWindow.serverResponse = "Данные на сервере были успешно обновлены.";
+                    $("#serverResponseModal").modal();
+                  });
+                }
+              })
+            }
+          },
+        });
+      </script>
+
+      <script>
+
+        primeSettings = new Vue({
+          el: '#primeSettings',
+          data: {
+            dQueryType: 'Resource',
+            dParseType: 'Resource',
+            dDepartmentLink: '',
+            dProfileService: 'https://lk.pnzgu.ru',
+            dStudentsLinkList: '',
+            dFileName: '',
+            dQueryAction: 'basicAction'
+          },
+
+          methods: {
+            requestPrimeSettings: function(){
+              fetch('/provider?type=prime')
+                      .then(response =>{
+                        if(response.status !== 204) {
+                          return response.json();
+                        }
+                        return null;
+                      })
+                      .then(primeSettings =>{
+                        if(primeSettings != null){
+                          this.dQueryType = primeSettings.QueryType;
+                          this.dParseType = primeSettings.ParseType;
+                          this.dDepartmentLink = primeSettings.DepartmentLink;
+                          this.dProfileService = primeSettings.ProfileService;
+                          this.dStudentsLinkList = primeSettings.StudentsLinkList;
+                          this.dFileName = primeSettings.FileName;
+                          this.dQueryAction = primeSettings.QueryAction;
+                        }
+                      })
+            },
+            submitMainSettings: function () {
+              fetch("/provider?type=prime", {
+                method : 'post',
+                body: JSON.stringify({
+                  QueryType : this.dQueryType,
+                  ParseType : this.dParseType,
+                  DepartmentLink : this.dDepartmentLink,
+                  ProfileService : this.dProfileService,
+                  StudentsLinkList : this.dStudentsLinkList,
+                  FileName : this.dFileName,
+                  QueryAction : this.dQueryAction,
+                })
+              }).then(response =>{
+                if(response.status === 204) {
+                  $(document).ready(function(){
+                    modalWindow.serverResponse = "Не добавлен файл кофигурации.";
+                    $("#serverResponseModal").modal();
+                  });
+                }
+                if (response.status === 202) {
+                  $(document).ready(function () {
+                    modalWindow.serverResponse = "Данные на сервере были успешно обновлены.";
+                    $("#serverResponseModal").modal();
+                  });
+                }
+              })
+            },
+          },
+          created: function () {
+            this.requestPrimeSettings();
+          },
+        })
+      </script>
+      <script>
+
+
+          queryInfo = [];
+          sectionInfo = [];
+
+
+          Vue.component('query-settings', {
+              props: ['conf'],
+              data: function () {
+                  return {
+                      variablesArray : {},
+                      sectionsArray : {},
+                  }
+              },
+              template:
+                  `
+          <div class = "card p-3 pb-4 mb-3">
+            <div class="d-flex flex-row-reverse">
+              <button type="button" class="close align-text-bottom" aria-label="Close" @click="deleteConf">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+
+            <form>
+              <div class="form-row">
+                <div class="form-group col-md-2" >
+                  <label>Тип ячейки</label>
+                  <select class="form-control" v-model="conf.selectedCellType">
+                    <option selected value="Cell">Столбец</option>
+                    <option value="Label">Строка</option>
+                  </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                  <label>Отображаемый текст ячейки</label>
+                  <input type="text" v-model="conf.cellText" class="form-control">
+                </div>
+
+                <div class="form-group col-md-2">
+                  <label>Номер столбца</label>
+                  <input type="number" v-model.number="conf.columnNumber" class="form-control">
+                </div>
+
+                <div class="form-group col-md-2">
+                  <label>Номер строки</label>
+                  <input type="number" v-model.number="conf.rowNumber" class="form-control">
+                </div>
+
+              </div>
+
+              <div class="form-row" v-if="conf.selectedCellType === 'Cell'">
+                <div class="form-group col-md-4">
+                  <label>Тип столбца</label>
+                  <select  @change="changelst" v-model="conf.selectedQueryType" class="form-control" >
+                    <option selected value="Resource">Ресурсы</option>
+                    <option value="Document">Документы</option>
+                    <option value="NIR">Научно исследовательские работы</option>
+                    <option value="RID">Результаты интеллектуальной деятельности</option>
+                  </select>
+                </div>
+
+                <div class="form-group col-md-4">
+                  <label>Секция</label>
+                  <select v-model="conf.selectedSection" class="form-control" >
+                    <option v-for="(item, key) in sectionsArray" :value="item">
+                      {{key}}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group col-md-4">
+                  <label>Значение</label>
+                  <select v-model="conf.selectedVariable" class="form-control" >
+                    <option v-for="(item, key) in variablesArray" :value="item">
+                      {{key}}
+                    </option>
+                  </select>
+                </div>
+
+              </div>
+            </form>
+          </div>
+          `,
+              methods: {
+                  changelst: function () {
+                      switch (this.conf.selectedQueryType) {
+                          case "Resource":{
+                              this.variablesArray = queryInfo[0];
+                              this.sectionsArray = sectionInfo[0];
+                              break;
+                          }
+                          case "Document":{
+                              this.variablesArray = queryInfo[1];
+                              this.sectionsArray = sectionInfo[1];
+                              break;
+                          }
+                          case "NIR":{
+                              this.variablesArray = queryInfo[2];
+                              this.sectionsArray = sectionInfo[2];
+                              break;
+                          }
+                          case "RID":{
+                              this.variablesArray = queryInfo[3];
+                              this.sectionsArray = sectionInfo[3];
+                              break;
+                          }
+                      }
+                  },
+                  deleteConf: function(){
+                      sheetsSettings.configsList.splice(sheetsSettings.configsList.indexOf(this.conf), 1);
+                  }
+              },
+              mounted: function (){
+                  this.changelst();
+              },
+          });
+
+          var targetFrame = document.getElementById("targetFrame");
+
+          targetFrame.onload = function () {
+            modalWindow.serverResponse = "";
+            if(targetFrame.contentDocument.body.innerHTML === "OK") {
+              modalWindow.serverResponse = "Файл конфигурации успешно добавлен.";
+              primeSettings.requestPrimeSettings();
+              app.requestMembers();
+              sheetsSettings.requestSheets();
+            }
+            else{
+              modalWindow.serverResponse = "Не выбран файл конфигурации.";
+          }
+          };
+
+          processingRequest = new Vue({
+            el: '#processingRequestSettings',
+            data: {
+              dQueryAction: "basic"
+            },
+            methods:{
+              sendProcessingRequest: function(){
+                fetch('/transfer/configuration?type=' + this.dQueryAction)
+                        .then(resp => {
+                              return resp.blob()
+                            }
+                        )
+                        .then(blob => {
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.style.display = 'none';
+                          a.href = url;
+                          a.download = primeSettings.dFileName;
+                          document.body.appendChild(a);
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                        })
+              }
+            }
+          });
+
+          sheetsSettings = new Vue({
+              el: '#sheetsSettings',
+              data: {
+                  isNewSheetAdded : false,
+                  newSheetName: "",
+                  selectedSheet: "",
+                  selectedSheetIndex: 0,
+                  sheetsList:[],
+                  configsList:[],
+              },
+              created: function () {
+                this.requestSheets();
+              },
+              methods: {
+                  requestSheets : function(){
+                    fetch('/provider?type=params')
+                            .then(response =>{
+                              if(response.status !== 204)
+                                return response.json();
+                              else
+                                return null;
+                            })
+                            .then(params =>{
+                              if(params != null) {
+                                queryInfo = params.query;
+                                sectionInfo = params.ajax;
+                              }
+                            });
+                    fetch('/provider?type=sheets')
+                            .then(response =>{
+                              if(response.status !== 204)
+                                return response.json();
+                              else
+                                return null;
+                            })
+                            .then(config =>{
+                              if(config != null) {
+                                this.sheetsList = config.sheets;
+                              }
+                            })
+                  },
+                  addConf : function(){
+                      sheetsSettings.configsList.push(
+                          {
+                              selectedQueryType : "Resource",
+                              selectedVariable: "",
+                              selectedSection : "",
+                              selectedCellType : "Cell",
+                              cellText: "",
+                              rowNumber: 0,
+                              columnNumber : 0
+                          }
+                      )
+                  },
+                  changeSheet: function(event, selectedIndex){
+                      this.configsList = this.sheetsList[selectedIndex][1];
+                      this.selectedSheetIndex = selectedIndex;
+                  },
+                  sendConfList : function(){
+                      fetch("/provider?type=sheets", {
+                        method : 'post',
+                        body: JSON.stringify({sheets_list : this.sheetsList})
+                      }).then(response => {
+                        if (response.status === 204) {
+                          $(document).ready(function () {
+                            modalWindow.serverResponse = "Не добавлен файл кофигурации.";
+                            $("#serverResponseModal").modal();
+                          });
+                        }
+                        if (response.status === 202) {
+                          $(document).ready(function () {
+                            modalWindow.serverResponse = "Данные на сервере были успешно обновлены.";
+                            $("#serverResponseModal").modal();
+                          });
+                        }
+                      })
+                  },
+                  addSheet: function(){
+                      this.showModal = true;
+                      this.sheetsList.push([this.newSheetName, []]);
+                      this.newSheetName = "";
+                      this.isNewSheetAdded = true;
+                  },
+                  addNewSheet: function(){
+                      this.isNewSheetAdded = false;
+                  },
+                  deleteCurrentSheet: function(){
+                      this.sheetsList.splice(this.selectedSheetIndex, 1);
+                      this.configsList = [];
+                  }
+              },
+
+          })
+      </script>
+
+    </th:block>
+
+  </body>
+</html>

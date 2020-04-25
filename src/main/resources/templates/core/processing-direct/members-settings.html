@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+</head>
+
+<body>
+<div th:fragment="membersSettings" class="tab-pane fade mt-3" id="nav-members" role="tabpanel" aria-labelledby="nav-members-tab">
+
+
+    <div id = "departmentMemberField" class="card-body text-left tab-pane fade show">
+
+        <department-member v-for = "(member, index) in dpList" :member="member" :index="index">  </department-member>
+
+        <button type="button" class="btn btn-primary bg-primary mt-3" @click ="addMember" data-toggle="modal">
+            Добавить
+        </button>
+
+        <button type="button" class="btn btn-success bg-success mt-3" @click = "sendMembersList" data-toggle="modal">
+            Сохранить
+        </button>
+
+    </div>
+
+</div>
+
+</body>

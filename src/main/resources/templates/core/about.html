@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Test</title>
+  </head>
+  <body>
+  <div th:insert="navbar :: primeNavbar"></div>
+
+
+    <div class = "card container mt-5 mb-5">
+      <div class="card-header bg-white">
+        <h4>Цели проекта</h4>
+      </div>
+      
+      <p style = "text-indent : 3em;" class = "mt-3">В настоящее время существует несколько крупных наукометрических сервисов (Scopus, eLibrary.ru, WebOfScience и др.). 
+        Большинство из них имеют визуальный интерфейс просмотра данных, простые инструменты поиска данных о публикации, об авторе, об учебном заведении и т.д. 
+        При этом отдельные решения (например, eLibrary.ru) представляет как бесплатный доступ к своим ресурсам, так и платную подписку, позволяющую вручную сформировать 
+        структуру университета и аффилировать сотрудников с отдельными подразделениями. Другие же решения (например, Scopus) предлагают бесплатные инструменты автоматической 
+        обработки данных (API), позволяющие учебным заведениям создавать свое программное обеспечение аналитики публикационной активности. 
+      </p> <p style = "text-indent : 3em;">При этом важно отметить, что каждый из сервисов обладает своей зоной распространенности (региональные, государственные, международные), 
+        что вызывает необходимость использования одновременно нескольких решений. Перспективность подобных проектов обеспечивается широким распространением
+        в РФ (и не только) информационных систем ВУЗов, позволяющих сформировать структуру университета (с привязкой сотрудников к отдельным подразделениям),
+          а также собственных разработок ВУЗов в области ИС (например, ЭИОС ПГУ).</p>
+      <p>    
+        <h5>Конкретные пукты для реализации проекта</h5> 
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Автоматизация процесса анализа и структурирования информации о публикациях и результатах научно-исследовательской деятельности из информационно-образовательных сред и электронных библиотек; </li>
+          <li class="list-group-item">Создание удобного инструмента просмотра данных, сортировки и формирования шаблонного файла отчётности.</li>
+        </ul>
+
+
+        <h5 class="mt-5">Задачи проекта</h5> 
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Разработка эффективных алгоритмов поиска и структурирования информации из электронных образовательных сред, без обращения к закрытым базам данных; </li>
+          <li class="list-group-item">Их реализация с помощью общедоступных средств проектирования и программирования; </li>
+          <li class="list-group-item">Разработка алгоритма вывода данных и системы формирования отчётной документации, настраиваемой алгоритмом;  </li>
+          <li class="list-group-item">Разработка интуитивно-понятного графического интерфейса для взаимодействия с пользователем;  </li>
+          <li class="list-group-item">Создание демонстрационного образца сервиса;  </li>
+          <li class="list-group-item">Апробация разработанного ПО на электронных машинах при формировании отчётов о НИД подразделений университета за 2020 год. </li>
+        </ul>
+
+
+        <h5 class="mt-5">Релизованный функционал</h5> 
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Параметризированные запросы к сервисам ЭИОС ПГУ; </li>
+          <li class="list-group-item">Анализ и сортировка данных на основе полученного ответа, хранение и накопление статической информации; </li>
+          <li class="list-group-item">Регуляционный модуль в виде конфигурационного файла; </li>
+        </ul>
+        <p style = "text-indent : 20px;" class="mt-2">Система вывода информации в виде отчёта формата excel-таблицы.</p>
+      </p>
+    
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+  </body>
+</html>

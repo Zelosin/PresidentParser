@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="fileTransferingSettings" class="card-body text-left tab-pane fade show active" id="nav-file" role="tabpanel" aria-labelledby="nav-file-tab">
+        <h5 class="card-title">Добавления файла конфигурации</h5>
+        <p class="card-text">Для работы системы необходимо добавить <code>.prbx-файл</code> или использовать его шаблон со стандартными настройками.</p>
+    <form action="/transfer/configuration" target="targetFrame" method="POST" enctype="multipart/form-data">
+        <div class="input-group mb-3 mr-md-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupFileAddon01">Загрузить файл</span>
+            </div>
+            <div class="custom-file">
+                <input type="file" name="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                <label class="custom-file-label" for="inputGroupFile01"></label>
+            </div>
+        </div>
+
+        <a href="http://localhost:8080/transfer/configuration?type=sample" class="ml-2 form-row">
+            Скачать шаблон
+        </a>
+
+        <iframe name="targetFrame" id="targetFrame" style="display: none;"></iframe>
+
+        <button type="submit" value="Upload" class="btn btn-primary bg-primary mt-3" data-toggle="modal" data-target="#serverResponseModal">
+            Добавить
+        </button>
+
+    </form>
+
+    </div>
+</body>

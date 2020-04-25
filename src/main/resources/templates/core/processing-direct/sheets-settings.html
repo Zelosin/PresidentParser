@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sheetsSettings" class="tab-pane fade mt-3" id="nav-sheets" role="tabpanel" aria-labelledby="nav-sheets-tab">
+    <div id = "sheetsSettings" class="card-body text-left tab-pane fade show">
+        <form class="form-horizontal ">
+            <div class = "form-row align-items-center ">
+                <div class="form-group col-md-4">
+                    <label>Список страниц</label>
+                    <select class="form-control" @change="changeSheet($event, $event.target.selectedIndex)" v-model="selectedSheet">
+                        <option v-for="sheet in sheetsList" >
+                            {{sheet[0]}}
+                        </option>
+                    </select>
+                </div>
+                <div class="offset-md-4 col-md-4 pt-3 d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary bg-primary" data-toggle="modal" @click="addNewSheet" data-target="#newSheetsModal">
+                        Новая страница
+                    </button>
+
+                    <button type="button" class="btn ml-1 btn btn-danger" @click="deleteCurrentSheet" data-toggle="modal">
+                        Удалить текущую
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+        <query-settings v-for="config in configsList" :conf = "config"></query-settings>
+
+        <form>
+            <button type="button" v-if="sheetsSettings.selectedSheet != null" class="btn btn-primary bg-primary mt-3" @click ="addConf" data-toggle="modal">
+                Добавить
+            </button>
+
+            <button type="button" v-if="sheetsSettings.selectedSheet != null" class="btn btn-success bg-success mt-3" @click = "sendConfList" data-toggle="modal">
+                Сохранить
+            </button>
+        </form>
+
+        <div class="modal fade" id="newSheetsModal" tabindex="-1" role="dialog" aria-labelledby="newSheetsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newSheetsModalLabel">Добавление новой страницы</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Имя страницы</label>
+                            <input type="text" v-model="newSheetName" class="form-control">
+                        </div>
+                        <label v-if = "isNewSheetAdded" class = "text-success">Страница добавлена</label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+                        <button type="button" class="btn btn-primary" @click="addSheet">Добавить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
