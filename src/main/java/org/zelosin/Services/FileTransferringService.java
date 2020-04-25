@@ -29,7 +29,7 @@ public class FileTransferringService {
         System.out.println("3" + is);
         HttpHeaders headers = new HttpHeaders();
 
-        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", "Образец конфигурационного файла.xml"));
+        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", "template.xml"));
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
