@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <title>ReportBuilder</title>
+</head>
+<body>
+  <div th:insert="navbar :: primeNavbar"></div>
+
+
+  <div class = "card container mt-5 mb-5">
+
+    <p style = "text-indent : 3em;" class = "mt-3">Сервис PSU Report Builder является программным средством,
+      позволяющим автоматизировать процесс формирования отчётной информации по подразделениям учебного заведения.
+      Данный сервис автоматизирует процесс анализа, получения данных и формирования готовых отчётов о НИД подразделений ПГУ.
+      В ходе работы сервис выполняет следующие задачи:
+    <ol>
+      <li>Поиск информации;</li>
+      <li>Анализ и фильтрация полученных данных;</li>
+      <li>Структурирование данных по заданным формам;</li>
+      <li>Формирование отчётной документации по НИР сотрудников и аспирантов;</li>
+      <li>Обеспечение интерактивной настройки параметров выходных данных;</li>
+      <li>Обеспечение настройки формы отчётного документа.</li>
+    </ol>
+
+      Предполагается возможность подключения ресурсов Scopus и eLibrary для расширения поисковых запросов.</p>
+
+  </div>
+
+
+</body>
+</html>

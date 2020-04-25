@@ -8,17 +8,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class PrimaryController {
 
     @RequestMapping(value = "/processing")
-    public String primeHandler(Model model) {
+    public String processingHandler() {
         return "core/processing";
     }
 
     @RequestMapping(value = "/about")
-    public String aboutHandler(Model model) {
+    public String aboutHandler() {
         return "core/about";
     }
 
     @RequestMapping(value = "/contacts")
-    public String contactsHandler(Model model) {
+    public String contactsHandler() {
         return "core/contacts";
+    }
+
+    @RequestMapping(value = "/")
+    public String primeHandler() {
+        return "core/prime";
     }
 }
