@@ -109,18 +109,3 @@ Vue.component('query-settings', {
         this.changelst();
     },
 });
-
-var targetFrame = document.getElementById("targetFrame");
-
-targetFrame.onload = function () {
-    modalWindow.serverResponse = "";
-    if(targetFrame.contentDocument.body.innerHTML === "OK") {
-        modalWindow.serverResponse = "Файл конфигурации успешно добавлен.";
-        primeSettings.requestPrimeSettings();
-        membersSettings.requestMembers();
-        sheetsSettings.requestSheets();
-    }
-    else{
-        modalWindow.serverResponse = "Не выбран файл конфигурации.";
-    }
-};

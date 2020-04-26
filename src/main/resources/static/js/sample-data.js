@@ -1,6 +1,6 @@
 
 var data;
-
+var targetFrame = document.getElementById("targetFrame");
 queryInfo = [];
 sectionInfo = [];
 
@@ -12,3 +12,16 @@ $('input[type="file"]').change(function(e){
     $('.custom-file-label').html(fileName);
 });
 
+
+targetFrame.onload = function () {
+    modalWindow.serverResponse = "";
+    if(targetFrame.contentDocument.body.innerHTML === "OK") {
+        modalWindow.serverResponse = "Файл конфигурации успешно добавлен.";
+        primeSettings.requestPrimeSettings();
+        membersSettings.requestMembers();
+        sheetsSettings.requestSheets();
+    }
+    else{
+        modalWindow.serverResponse = "Не выбран файл конфигурации.";
+    }
+};
