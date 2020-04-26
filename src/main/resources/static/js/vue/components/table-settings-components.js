@@ -117,7 +117,7 @@ targetFrame.onload = function () {
     if(targetFrame.contentDocument.body.innerHTML === "OK") {
         modalWindow.serverResponse = "Файл конфигурации успешно добавлен.";
         primeSettings.requestPrimeSettings();
-        app.requestMembers();
+        membersSettings.requestMembers();
         sheetsSettings.requestSheets();
     }
     else{
