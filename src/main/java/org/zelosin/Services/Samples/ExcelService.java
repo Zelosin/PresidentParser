@@ -116,7 +116,24 @@ public class ExcelService {
         return mOutputStream;
     }
 
-    public String getmOutputFileName() {
-        return mOutputFileName;
-    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

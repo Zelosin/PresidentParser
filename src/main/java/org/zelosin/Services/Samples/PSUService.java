@@ -64,7 +64,6 @@ public class PSUService{
         }
     }
 
-
     public static synchronized Document makeJSOUPQuery(String pURL) {
         Document mReturningDocument = null;
         if(!pURL.contains("https") && (pURL.contains("http")))
@@ -272,6 +271,31 @@ public class PSUService{
         });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

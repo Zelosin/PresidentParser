@@ -19,7 +19,7 @@ processingRequest = new Vue({
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
-                })
+            })
         }
     }
 });

@@ -19,5 +19,4 @@ public class BasicServicesCompiler {
         this.mSheetConfigurationsAssumer = new SheetConfigurationsAssumer();
     }
 
-    
 }
