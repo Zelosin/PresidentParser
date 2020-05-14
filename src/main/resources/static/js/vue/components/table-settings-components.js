@@ -4,6 +4,8 @@ Vue.component('query-settings', {
         return {
             variablesArray : {},
             sectionsArray : {},
+            actionsArray : {},
+            compareValue : ""
         }
     },
     template:
@@ -42,7 +44,6 @@ Vue.component('query-settings', {
                 </div>
 
               </div>
-
               <div class="form-row" v-if="conf.selectedCellType === 'Cell'">
                 <div class="form-group col-md-4">
                   <label>Тип столбца</label>
@@ -62,7 +63,6 @@ Vue.component('query-settings', {
                     </option>
                   </select>
                 </div>
-
                 <div class="form-group col-md-4">
                   <label>Значение</label>
                   <select v-model="conf.selectedVariable" class="form-control" >
@@ -71,8 +71,60 @@ Vue.component('query-settings', {
                     </option>
                   </select>
                 </div>
-
               </div>
+
+              <div class="form-row" v-if="conf.selectedCellType === 'Cell'">
+    
+                    <div class="form-group col-md-4" >
+                      <label>Тип фильтра</label>
+                      <select @change="changeFilterType" v-model="conf.filterType" class="form-control">
+                        <option selected value="NoFilter">Нет фильтра</option>
+                        <option value="StringCompare">Сравнение строк</option>
+                        <option value="NumberCompare">Сравнение чисел</option>
+                        <option value="DateCompare">Сравнение дат</option>
+                        <option value="DateInterval">Период дат</option>
+                      </select>
+                    </div>
+                   
+                   <template v-if="conf.filterType !== 'NoFilter'">
+                        <div class="form-group col-md-4">
+                          <label>Способ сравнения</label>
+                          <select v-model="conf.filterAction" class="form-control" >
+                            <option  v-for="(item, key) in actionsArray" :value="key">
+                              {{item}}
+                            </option>
+                          </select>
+                        </div>
+                        
+                        <div class="form-group col-md-4" v-if="conf.filterType == 'DateInterval'">
+                          <label>Сравниваемый промежуток</label>
+                          <date-picker
+                                  v-model="conf.filterDateValue"
+                                  lang="ru"
+                                  format="DD-MM-YYYY"
+                                  height="38"
+                                  width="328"
+                                  range>
+                          </date-picker>
+                        </div>
+                        
+                        <div class="form-group col-md-4" v-else-if="conf.filterType == 'DateCompare'">
+                          <label>Сравниваемая дата</label>
+                          <date-picker
+                                  v-model="conf.filterDateValue"
+                                  lang="ru"
+                                  format="DD-MM-YYYY"
+                                  height="38"
+                                  width="328">
+                          </date-picker>
+                        </div>
+                        
+                        <div class="form-group col-md-4" v-else>
+                          <label>Сравниваемое значение</label>
+                          <input v-model.number="conf.filterCompValue" class="form-control">
+                        </div>
+                    </template>      
+                </div>
             </form>
           </div>
           `,
@@ -103,9 +155,43 @@ Vue.component('query-settings', {
         },
         deleteConf: function(){
             sheetsSettings.configsList.splice(sheetsSettings.configsList.indexOf(this.conf), 1);
-        }
+        },
+        changeFilterType: function(){
+            switch (this.conf.filterType) {
+                case "DateCompare":{
+                    this.actionsArray = filterDateAction;
+                    this.conf.filterValue = new Date();
+                    this.conf.filterAction = "After";
+                    break;
+                }
+                case "StringCompare":{
+                    this.actionsArray = filterStringAction;
+                    this.conf.filterValue = "";
+                    this.conf.filterAction = "Equal";
+                    break;
+                }
+                case "NumberCompare":{
+                    this.actionsArray = filterNumberAction;
+                    this.conf.filterValue = "";
+                    this.conf.filterAction = "Equal";
+                    break;
+                }
+                case "DateInterval":{
+                    this.actionsArray = filterDateItervalAction;
+                    this.conf.filterAction = "InInterval";
+                    this.conf.filterValue = new Date();
+                    break;
+                }
+                case "NoFilter":{
+                    this.actionsArray = {};
+                    this.compareValue = "";
+                    break;
+                }
+            }
+        },
     },
-    mounted: function (){
+    mounted : function (){
         this.changelst();
+        this.changeFilterType();
     },
 });

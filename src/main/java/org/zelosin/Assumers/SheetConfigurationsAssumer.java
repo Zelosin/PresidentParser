@@ -4,8 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.zelosin.Assumers.Abstract.Assumer;
 import org.zelosin.Assumers.AssumersComponents.SheetConfiguration;
+import org.zelosin.Assumers.AssumersComponents.SheetsComponents.SheetFilter;
+import org.zelosin.Assumers.AssumersComponents.SheetsComponents.SimpleLabel;
+import org.zelosin.Assumers.AssumersComponents.SheetsComponents.TableFormConfigurations;
+import org.zelosin.Configurations.Form.FilterAction;
+import org.zelosin.Configurations.Form.FilterType;
 import org.zelosin.Configurations.Query.QueryTypeAction;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -34,7 +40,7 @@ public class SheetConfigurationsAssumer implements Assumer {
                     ((JSONArray)((JSONArray)sheet).get(1)).forEach(sheetConfig->{
                         switch ((String)((JSONObject)sheetConfig).get("selectedCellType")){
                             case("Cell"):{
-                                currentSheet.new TableFormConfigurations(
+                                TableFormConfigurations configurations = new TableFormConfigurations(
                                         (String)((JSONObject)sheetConfig).get("cellText"),
                                         QueryTypeAction.valueOf((String)((JSONObject)sheetConfig).get("selectedQueryType")),
                                         (String)((JSONObject)sheetConfig).get("selectedSection"),
@@ -42,15 +48,58 @@ public class SheetConfigurationsAssumer implements Assumer {
                                         (Integer) (((JSONObject)sheetConfig)).get("columnNumber"),
                                         (Integer) (((JSONObject)sheetConfig)).get("rowNumber"),
                                         null);
+                                if(!(((JSONObject)sheetConfig).get("filterType")).equals("NoFilter")) {
+                                    try {
+                                        if (((JSONObject) sheetConfig).get("filterType").equals("DateCompare")) {
+                                            try {
+                                                configurations.setmValueFilter(
+                                                        new SheetFilter(
+                                                                FilterType.valueOf((String) ((JSONObject) sheetConfig).get("filterType")),
+                                                                FilterAction.valueOf((String) ((JSONObject) sheetConfig).get("filterAction")),
+                                                                SheetFilter.mClienDateFormatter.parse((String) ((JSONObject) sheetConfig).get("filterDateValue")),
+                                                                null
+                                                        )
+                                                );
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                            }
+                                        } else if (((JSONObject) sheetConfig).get("filterType").equals("DateInterval")) {
+                                            try {
+                                                configurations.setmValueFilter(
+                                                        new SheetFilter(
+                                                                FilterType.valueOf((String) ((JSONObject) sheetConfig).get("filterType")),
+                                                                FilterAction.valueOf((String) ((JSONObject) sheetConfig).get("filterAction")),
+                                                                SheetFilter.mClienDateFormatter.parse((String) ((JSONArray) ((JSONObject) sheetConfig).get("filterDateValue")).get(0)),
+                                                                SheetFilter.mClienDateFormatter.parse((String) ((JSONArray) ((JSONObject) sheetConfig).get("filterDateValue")).get(1))
+                                                        )
+                                                );
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                            }
+                                        } else {
+                                            configurations.setmValueFilter(
+                                                    new SheetFilter(
+                                                            FilterType.valueOf((String) ((JSONObject) sheetConfig).get("filterType")),
+                                                            FilterAction.valueOf((String) ((JSONObject) sheetConfig).get("filterAction")),
+                                                            (String) ((JSONObject) sheetConfig).get("filterCompValue")
+                                                    )
+                                            );
+                                        }
+                                    }catch (Exception e){
+
+                                    }
+                                }
+
+                                currentSheet.addTableConfig(configurations);
                                 break;
                             }
                             case("Label"):{
-                                currentSheet.new SimpleLabel(
+                                currentSheet.addLabel(new SimpleLabel(
                                         (String)((JSONObject)sheetConfig).get("cellText"),
                                         (Integer)(((JSONObject)sheetConfig)).get("rowNumber"),
                                         (Integer)(((JSONObject)sheetConfig)).get("columnNumber"),
                                         null
-                                );
+                                ));
                                 break;
                             }
                         }
@@ -61,6 +110,9 @@ public class SheetConfigurationsAssumer implements Assumer {
 
     @Override
     public JSONObject provideContent() {
+
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
         JSONObject returningJSON = new JSONObject();
         JSONArray sheetsList = new JSONArray();
         mSheetConfigurationsList.forEach(sheet ->{
@@ -70,12 +122,34 @@ public class SheetConfigurationsAssumer implements Assumer {
             sheet.mTableFormConfigurations.forEach(tableConfig ->{
                 JSONObject sheetConfig = new JSONObject();
                 sheetConfig.put("selectedCellType", "Cell");
-                sheetConfig.put("selectedVariable", tableConfig.mVariable);
-                sheetConfig.put("selectedSection", tableConfig.mSectionName);
-                sheetConfig.put("cellText", tableConfig.mDisplayText);
-                sheetConfig.put("rowNumber", tableConfig.mDisplayRow);
-                sheetConfig.put("columnNumber", tableConfig.mDisplayColumn);
-                sheetConfig.put("selectedQueryType", String.valueOf(tableConfig.mQueryType));
+                sheetConfig.put("selectedVariable", tableConfig.getmVariable());
+                sheetConfig.put("selectedSection", tableConfig.getmSectionName());
+                sheetConfig.put("cellText", tableConfig.getmDisplayText());
+                sheetConfig.put("rowNumber", tableConfig.getmDisplayRow());
+                sheetConfig.put("columnNumber", tableConfig.getmDisplayColumn());
+                sheetConfig.put("selectedQueryType", String.valueOf(tableConfig.getmQueryType()));
+                if(tableConfig.getmValueFilter() != null) {
+                    if (tableConfig.getmValueFilter().getmFilterType() != null) {
+                        sheetConfig.put("filterAction", tableConfig.getmValueFilter().getmFilterAction().toString());
+                        sheetConfig.put("filterType", tableConfig.getmValueFilter().getmFilterType().toString());
+                        if (tableConfig.getmValueFilter().getmFilterType() != FilterType.DateCompare &&
+                                tableConfig.getmValueFilter().getmFilterType() != FilterType.DateInterval) {
+                            sheetConfig.put("filterCompValue", tableConfig.getmValueFilter().getmComparableValue());
+                        } else if (tableConfig.getmValueFilter().getmFilterType() == FilterType.DateCompare) {
+                            sheetConfig.put("filterDateValue", dateFormatter.format(tableConfig.getmValueFilter().getmFirstDate()) + "T21:00:00.000Z");
+                        } else {
+                            JSONArray array = new JSONArray();
+                            array.put(dateFormatter.format(tableConfig.getmValueFilter().getmFirstDate()) + "T21:00:00.000Z");
+                            array.put(dateFormatter.format(tableConfig.getmValueFilter().getmSecondDate()) + "T21:00:00.000Z");
+                            sheetConfig.put("filterDateValue", array);
+                        }
+                    } else {
+                        sheetConfig.put("filterType", "NoFilter");
+                    }
+                }
+                else {
+                    sheetConfig.put("filterType", "NoFilter");
+                }
                 configList.put(sheetConfig);
             });
             sheet.mLabelsList.forEach(lableConfig ->{

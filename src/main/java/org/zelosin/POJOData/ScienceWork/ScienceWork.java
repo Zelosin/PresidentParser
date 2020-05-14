@@ -13,6 +13,8 @@ public class ScienceWork {
 
     public Map<String, String> mScienceWorkInformation = new HashMap<String, String>();
     protected String mScienceWorkLink;
+    public boolean isVerified = true;
+
     public void parse(){};
 
     public ScienceWork(String mScienceWorkLink) {

@@ -1,4 +1,4 @@
-
+Vue.use(DatePicker.default);
 sheetsSettings = new Vue({
     el: '#sheetsSettings',
     data: {
@@ -36,6 +36,7 @@ sheetsSettings = new Vue({
                 })
                 .then(config =>{
                     if(config != null) {
+                        this.sheetsList = [];
                         this.sheetsList = config.sheets;
                     }
                 })
@@ -49,7 +50,11 @@ sheetsSettings = new Vue({
                     selectedCellType : "Cell",
                     cellText: "",
                     rowNumber: 0,
-                    columnNumber : 0
+                    columnNumber : 0,
+                    filterType: "NoFilter",
+                    filterAction: "",
+                    filterCompValue: "",
+                    filterDateValue: ""
                 }
             )
         },

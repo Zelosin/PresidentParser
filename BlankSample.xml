@@ -183,7 +183,7 @@
             <style Name = "Basic" FontFamily = "Calibri" Color = "BLACK" ColumnWidth = 5000 
                 FontSize = 11 Wrappable = "false" Italic = "false" Bold = "false" UnderLine = "false" />
             <style Name = "RedGuardian" FontFamily = "Arial" Color = "RED" ColumnWidth = 10000 
-                FontSize = 14 Wrappable = "true" Italic = "true" Bold = "true" UnderLine = "false" />
+                FontSize = 15 Wrappable = "true" Italic = "true" Bold = "true" UnderLine = "false" />
         </excel_styles>
         <sheets_list>
         

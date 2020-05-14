@@ -2,7 +2,15 @@ package org.zelosin.Configurations.Form;
 
 public enum FilterAction {
     Equal,
-    BiggestThan,
-    LessThan,
-    NotEqual
+    Biggest,
+    Less,
+    NotEqual,
+    BiggestOrEqual,
+    LessOrEqual,
+    Before,
+    After,
+    Contains,
+    DontContains,
+    InInterval,
+    OutOfInterval
 }

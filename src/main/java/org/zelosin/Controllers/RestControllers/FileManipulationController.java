@@ -10,6 +10,8 @@ import org.zelosin.Base.ProcessingSample;
 import org.zelosin.Services.FileTransferringService;
 
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
@@ -36,11 +38,12 @@ public class FileManipulationController {
             tProcessingSample = new ProcessingSample();
         ResponseEntity<Object> response = new ResponseEntity<>("",HttpStatus.OK);
 
+
         if(tProcessingSample.mBasicServicesCompiler != null) {
             switch (callType) {
                 case ("basic"): {
                     response = FileTransferringService.processingEntityToFileToDownload(tProcessingSample.basicProcessingCycle(),
-                            tProcessingSample.mBasicServicesCompiler.mQueryConfigurationsAssumer.mExportPath);
+                            tProcessingSample.mBasicServicesCompiler.mQueryConfigurationsAssumer.mExportPath, "application/vnd.ms-excel");
                     break;
                 }
                 case ("query"): {
@@ -49,17 +52,24 @@ public class FileManipulationController {
                 }
                 case ("parse"): {
                     response = FileTransferringService.processingEntityToFileToDownload(tProcessingSample.parseCycle(),
-                            tProcessingSample.mBasicServicesCompiler.mQueryConfigurationsAssumer.mExportPath);
+                            tProcessingSample.mBasicServicesCompiler.mQueryConfigurationsAssumer.mExportPath, "application/vnd.ms-excel");
+                    break;
+                }
+                case ("template"): {
+                    try {
+                        response  = FileTransferringService.processingEntityToFileToDownload(tProcessingSample.build(),
+                                "Шаблон.xml", "application/xml");
+                    } catch (TransformerException | ParserConfigurationException e) {
+                        response = new ResponseEntity<>("Не удалось посторить конфигурационный файл.", HttpStatus.NO_CONTENT);
+                    }
                     break;
                 }
             }
         }else {
-            response = new ResponseEntity<>("Не добавлен файл кофигурации.", HttpStatus.NO_CONTENT);
+            response = new ResponseEntity<>("Не удалось обработать конфигурацию.", HttpStatus.NO_CONTENT);
         }
-        int i = 1;
         session.setAttribute(PROCESSING_KEY, tProcessingSample);
         return response;
-
 }
 
     @PostMapping(value = "/configuration", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -76,6 +86,7 @@ public class FileManipulationController {
 
             tProcessingSample.loadConfigFile(new ByteArrayInputStream(file.getBytes()));
             session.setAttribute(PROCESSING_KEY, tProcessingSample);
+
             return new ResponseEntity<>("OK", HttpStatus.OK);
         }
     }

@@ -183,9 +183,20 @@
             <style Name = "Basic" FontFamily = "Calibri" Color = "BLACK" ColumnWidth = 5000 
                 FontSize = 11 Wrappable = "false" Italic = "false" Bold = "false" UnderLine = "false" />
             <style Name = "RedGuardian" FontFamily = "Arial" Color = "RED" ColumnWidth = 10000 
-                FontSize = 14 Wrappable = "true" Italic = "true" Bold = "true" UnderLine = "false" />
+                FontSize = 15 Wrappable = "true" Italic = "true" Bold = "true" UnderLine = "false" />
         </excel_styles>
         <sheets_list>
+            <sheet name = "Сотрудники2">
+                <sheet_body>
+                    <label display_text = "Пример создание строки теекста1" column = 13  row = 1 />
+                    <cell display_text = "Дата издания" query_type = "Resource" section_name = "r_article"
+                          variable = "r_year_of_publish" column = 2  row = 1 />
+                    <cell display_text = "Дата издания" query_type = "Resource" section_name = "r_article"
+                          variable = "r_name" column = 1 row = 1 comp_type = "StringCompare" comp_action = "NotEqual" comp_value = "ПГУ" />
+                    <cell display_text = "Правообладатель" query_type = "Resource" section_name = "r_article"
+                          variable = "r_copyright_holder" column = 3 row = 1 />
+                </sheet_body>
+            </sheet>
         </sheets_list>
     </excel_configurations_list>
 

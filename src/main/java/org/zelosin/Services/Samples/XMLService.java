@@ -5,6 +5,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.zelosin.Assumers.AssumersComponents.SheetConfiguration;
+import org.zelosin.Assumers.AssumersComponents.SheetsComponents.SheetFilter;
+import org.zelosin.Assumers.AssumersComponents.SheetsComponents.SimpleLabel;
+import org.zelosin.Assumers.AssumersComponents.SheetsComponents.TableFormConfigurations;
 import org.zelosin.Configurations.Form.CellStyle;
 import org.zelosin.Configurations.Form.FilterAction;
 import org.zelosin.Configurations.Form.FilterType;
@@ -14,6 +17,8 @@ import org.zelosin.Services.BasicServicesCompiler;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,6 +116,8 @@ public class XMLService{
     }
 
     private void parseForExcelSheets(Document pParsingDocument) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+
         for(Element mStylesList : pParsingDocument.selectFirst("excel_styles").children())
             new CellStyle(
                     mStylesList.attr("Name"),
@@ -127,34 +134,72 @@ public class XMLService{
         for(Element tSheetElement : mSheetList.children()){
             SheetConfiguration tCurrentSheet = mReturningCompiler.mSheetConfigurationsAssumer.add(tSheetElement.attr("name"), false);
 
-            for(Element tSheetFilterElement : tSheetElement.selectFirst("filters_list").children()) {
+            /*for(Element tSheetFilterElement : tSheetElement.selectFirst("filters_list").children()) {
                 tCurrentSheet.new SheetFilter(
                         FilterType.valueOf(tSheetFilterElement.attr("type")),
                         tSheetFilterElement.attr("variable"),
                         FilterAction.valueOf(tSheetFilterElement.attr("action")),
                         tSheetFilterElement.attr("value"));
-            }
+            }*/
+
+            TableFormConfigurations tTableSheetConfig;
 
             for(Element tTableConfig : tSheetElement.selectFirst("sheet_body").children()){
                 switch (tTableConfig.tagName()){
                     case("cell"):{
-                        tCurrentSheet.new TableFormConfigurations(
-                            tTableConfig.attr("display_text"),
-                            QueryTypeAction.valueOf(tTableConfig.attr("query_type")),
-                            tTableConfig.attr("section_name"),
-                            tTableConfig.attr("variable"),
-                            Integer.valueOf(tTableConfig.attr("column")),
-                            Integer.valueOf(tTableConfig.attr("row")),
-                            tTableConfig.attr("style"));
-                            break;
+                        tTableSheetConfig = new TableFormConfigurations(
+                                tTableConfig.attr("display_text"),
+                                QueryTypeAction.valueOf(tTableConfig.attr("query_type")),
+                                tTableConfig.attr("section_name"),
+                                tTableConfig.attr("variable"),
+                                Integer.valueOf(tTableConfig.attr("column")),
+                                Integer.valueOf(tTableConfig.attr("row")),
+                                tTableConfig.attr("style"));
+                        if(!tTableConfig.attr("comp_type").isEmpty()){
+                            if(!tTableConfig.attr("comp_type").equals("DateCompare") &&
+                                    !tTableConfig.attr("comp_type").equals("DateInterval")) {
+                                tTableSheetConfig.setmValueFilter( new SheetFilter(
+                                        FilterType.valueOf(tTableConfig.attr("comp_type")),
+                                        FilterAction.valueOf(tTableConfig.attr("comp_action")),
+                                        tTableConfig.attr("comp_value")
+                                ));
+                            }
+                            else if(tTableConfig.attr("comp_type").equals("DateCompare")){
+                                try {
+                                    tTableSheetConfig.setmValueFilter( new SheetFilter(
+                                            FilterType.valueOf(tTableConfig.attr("comp_type")),
+                                            FilterAction.valueOf(tTableConfig.attr("comp_action")),
+                                            dateFormatter.parse(tTableConfig.attr("comp_first_date")),
+                                            null
+                                    ));
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else{
+                                try {
+                                    tTableSheetConfig.setmValueFilter( new SheetFilter(
+                                            FilterType.valueOf(tTableConfig.attr("comp_type")),
+                                            FilterAction.valueOf(tTableConfig.attr("comp_action")),
+                                            dateFormatter.parse(tTableConfig.attr("comp_first_date")),
+                                            dateFormatter.parse(tTableConfig.attr("comp_second_date"))
+                                    ));
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                        tCurrentSheet.addTableConfig(tTableSheetConfig);
+                        break;
                     }
                     case("label"):{
-                        tCurrentSheet.new SimpleLabel(
+                        tCurrentSheet.addLabel(new SimpleLabel(
                                 tTableConfig.attr("display_text"),
                                 Integer.parseInt(tTableConfig.attr("row")),
                                 Integer.parseInt(tTableConfig.attr("column")),
                                 tTableConfig.attr("style")
-                        );
+                        ));
                         break;
                     }
                 }

@@ -38,7 +38,7 @@ public class FileTransferringService {
                 .body(new InputStreamResource(is));
 }
 
-    public static synchronized ResponseEntity<Object> processingEntityToFileToDownload(ByteArrayOutputStream pBao, String pFileName){
+    public static synchronized ResponseEntity<Object> processingEntityToFileToDownload(ByteArrayOutputStream pBao, String pFileName, String MIME){
 
         InputStreamResource tResourceInputStream = null;
 
@@ -50,9 +50,8 @@ public class FileTransferringService {
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
-
         return ResponseEntity.ok().headers(headers).contentLength(
-                pBao.size()).contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(tResourceInputStream);
+                pBao.size()).contentType(MediaType.parseMediaType(MIME)).body(tResourceInputStream);
     }
 
 }

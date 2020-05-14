@@ -4,6 +4,35 @@ var targetFrame = document.getElementById("targetFrame");
 queryInfo = [];
 sectionInfo = [];
 
+
+filterStringAction = {
+    Equal : "Равно",
+    NotEqual : "Не равно",
+    Contains : "Содержит",
+    DontContains : "Не содержит"
+};
+
+filterDateAction = {
+    After: "Позже",
+    Before: "Раньше",
+    Equal: "Равно",
+    NotEqual: "Не равно"
+};
+
+filterDateItervalAction = {
+    InInterval: "Входит в интервал",
+    OutOfInterval: "Не входит в интервал"
+};
+
+filterNumberAction = {
+    Biggest : "Больше",
+    BiggestOrEqual : "Больше или равно",
+    Less : "Меньше",
+    LessOrEqual : "Меньше или равно",
+    Equal : "Равно",
+    NotEqual : "Не равно"
+};
+
 $('input[type="file"]').change(function(e){
     data = new FormData();
     data.append('file', e.target.files[0]);
@@ -22,6 +51,6 @@ targetFrame.onload = function () {
         sheetsSettings.requestSheets();
     }
     else{
-        modalWindow.serverResponse = "Не выбран файл конфигурации.";
+        modalWindow.serverResponse = "Не удалось добавить файл конфигурации.";
     }
 };

@@ -84,23 +84,46 @@ public class ExcelService {
             });
 
             tConfig.mTableFormConfigurations.forEach(tCell ->{
-                tCellRow = tCell.mDisplayRow;
-                fillExcelCell(tCell.mDisplayRow, tCell.mDisplayColumn, tCell.mDisplayText, tCell.mStyleLink);
+                mProcessingCompiler.mDepartmentMembersAssumer.mDepartmentMembersList.forEach((key, tMember) -> {
+
+                    for (String mParam : tCell.getmSectionName().split("::")) {
+                        ArrayList<ScienceWork> tScienceWorkArray = tMember.mMemberInformationList.get(tCell.getmQueryType(), mParam);
+                        tScienceWorkArray.forEach(scienceWork -> {
+                            scienceWork.isVerified = true;
+                        });
+                    }
+                });
+            });
+
+            tConfig.mTableFormConfigurations.forEach(tCell ->{
+                mProcessingCompiler.mDepartmentMembersAssumer.mDepartmentMembersList.forEach((key, tMember) -> {
+
+                    for (String mParam : tCell.getmSectionName().split("::")) {
+                        ArrayList<ScienceWork> tScienceWorkArray = tMember.mMemberInformationList.get(tCell.getmQueryType(), mParam);
+                        tScienceWorkArray.forEach(scienceWork -> {
+                            if(scienceWork.isVerified) {
+                                if (!tCell.verifyScienceWork(scienceWork))
+                                    scienceWork.isVerified = false;
+                            }
+                        });
+                    }
+                });
+            });
+
+            tConfig.mTableFormConfigurations.forEach(tCell ->{
+                tCellRow = tCell.getmDisplayRow();
+                fillExcelCell(tCell.getmDisplayRow(), tCell.getmDisplayColumn(), tCell.getmDisplayText(), tCell.getmStyleLink());
 
                 mProcessingCompiler.mDepartmentMembersAssumer.mDepartmentMembersList.forEach((key, tMember) ->{
 
-                    for(String mParam : tCell.mSectionName.split("::")) {
-                        ArrayList<ScienceWork> tScienceWorkArray = tMember.mMemberInformationList.get(tCell.mQueryType, mParam);
+                    for(String mParam : tCell.getmSectionName().split("::")) {
+                        ArrayList<ScienceWork> tScienceWorkArray = tMember.mMemberInformationList.get(tCell.getmQueryType(), mParam);
                         if(tScienceWorkArray != null) {
                             tScienceWorkArray.forEach(tScienceWork -> {
-                                try {
-                                    if (!tConfig.verifyScienceWork(tScienceWork))
-                                        return;
-                                } catch (NullPointerException e) {
+                                if (!tScienceWork.isVerified)
                                     return;
-                                }
                                 tCellRow++;
-                                fillExcelCell(tCellRow, tCell.mDisplayColumn, tScienceWork.mScienceWorkInformation.get(tCell.mVariable), tCell.mStyleLink);
+                                fillExcelCell(tCellRow, tCell.getmDisplayColumn(), tScienceWork.mScienceWorkInformation.get(tCell.getmVariable()), tCell.getmStyleLink());
                             });
                         }
                     }

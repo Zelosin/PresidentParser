@@ -8,6 +8,10 @@
         <div class="form-row mt-2">
             <div class="form-group col-md-4">
                 <div class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" id="templateRadio" name="systemAction" value="template" v-model="dQueryAction">
+                    <label class="custom-control-label ml-1" for="templateRadio">Получить текущую конфигурацию</label>
+                </div>
+                <div class="custom-control custom-radio">
                     <input type="radio" class="custom-control-input" id="queryRadio" name="systemAction" value="query" v-model="dQueryAction">
                     <label class="custom-control-label ml-1" for="queryRadio">Осуществить только запрос данных</label>
                 </div>
@@ -19,7 +23,6 @@
                     <input type="radio" class="custom-control-input" id="basicRadio" name="systemAction" value="basic" v-model="dQueryAction">
                     <label class="custom-control-label ml-1" for="basicRadio">Весь цикл</label>
                 </div>
-
             </div>
 
         </div>

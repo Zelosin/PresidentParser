@@ -51,5 +51,4 @@ public class DepartmentMember extends DepartmentMemberInformation {
     public void setmName(String mName) {
         this.mName = mName;
     }
-
 }
