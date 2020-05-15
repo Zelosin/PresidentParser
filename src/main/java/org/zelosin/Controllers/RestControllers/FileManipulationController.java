@@ -50,6 +50,10 @@ public class FileManipulationController {
                     tProcessingSample.queryCycle();
                     break;
                 }
+                case ("reset"): {
+                    tProcessingSample = null;
+                    break;
+                }
                 case ("parse"): {
                     response = FileTransferringService.processingEntityToFileToDownload(tProcessingSample.parseCycle(),
                             tProcessingSample.mBasicServicesCompiler.mQueryConfigurationsAssumer.mExportPath, "application/vnd.ms-excel");
