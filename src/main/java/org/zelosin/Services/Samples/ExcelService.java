@@ -7,12 +7,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.zelosin.Configurations.Form.CellStyle;
+import org.zelosin.Configurations.Query.QueryTypeAction;
 import org.zelosin.POJOData.ScienceWork.ScienceWork;
 import org.zelosin.Services.BasicServicesCompiler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class ExcelService {
@@ -88,27 +90,48 @@ public class ExcelService {
 
                     for (String mParam : tCell.getmSectionName().split("::")) {
                         ArrayList<ScienceWork> tScienceWorkArray = tMember.mMemberInformationList.get(tCell.getmQueryType(), mParam);
-                        tScienceWorkArray.forEach(scienceWork -> {
-                            scienceWork.isVerified = true;
-                        });
+                        if(tScienceWorkArray != null) {
+                            tScienceWorkArray.forEach(scienceWork -> {
+                                scienceWork.isVerified = true;
+                                scienceWork.hasDuplicate = true;
+                            });
+                        }
                     }
                 });
             });
 
             tConfig.mTableFormConfigurations.forEach(tCell ->{
                 mProcessingCompiler.mDepartmentMembersAssumer.mDepartmentMembersList.forEach((key, tMember) -> {
-
                     for (String mParam : tCell.getmSectionName().split("::")) {
                         ArrayList<ScienceWork> tScienceWorkArray = tMember.mMemberInformationList.get(tCell.getmQueryType(), mParam);
-                        tScienceWorkArray.forEach(scienceWork -> {
-                            if(scienceWork.isVerified) {
-                                if (!tCell.verifyScienceWork(scienceWork))
-                                    scienceWork.isVerified = false;
-                            }
-                        });
+                        if(tScienceWorkArray != null) {
+                            tScienceWorkArray.forEach(scienceWork -> {
+                                if (scienceWork.isVerified) {
+                                    if (!tCell.verifyScienceWork(scienceWork))
+                                        scienceWork.isVerified = false;
+                                }
+                            });
+                        }
                     }
                 });
             });
+
+            HashMap<String, ScienceWork> scienceWorksWithDuplicates = new HashMap<>();
+            mProcessingCompiler.mDepartmentMembersAssumer.mDepartmentMembersList.forEach((key, tMember) -> {
+                for (QueryTypeAction action : QueryTypeAction.values()) {
+                    tMember.mMemberInformationList.row(action).forEach((stringKey, worksArray) ->{
+                        worksArray.forEach(scienceWork -> {
+                            scienceWorksWithDuplicates.put(scienceWork.getmScienceWorkLink(), scienceWork);
+                        });
+                    });
+                }
+            });
+
+            scienceWorksWithDuplicates.forEach(((link, scienceWork) -> {
+                scienceWork.hasDuplicate = false;
+            }));
+
+
 
             tConfig.mTableFormConfigurations.forEach(tCell ->{
                 tCellRow = tCell.getmDisplayRow();
@@ -120,7 +143,7 @@ public class ExcelService {
                         ArrayList<ScienceWork> tScienceWorkArray = tMember.mMemberInformationList.get(tCell.getmQueryType(), mParam);
                         if(tScienceWorkArray != null) {
                             tScienceWorkArray.forEach(tScienceWork -> {
-                                if (!tScienceWork.isVerified)
+                                if (!tScienceWork.isVerified || tScienceWork.hasDuplicate)
                                     return;
                                 tCellRow++;
                                 fillExcelCell(tCellRow, tCell.getmDisplayColumn(), tScienceWork.mScienceWorkInformation.get(tCell.getmVariable()), tCell.getmStyleLink());

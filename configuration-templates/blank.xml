@@ -83,6 +83,7 @@
         <nir_query>
             <query able = "true" assign_name = "Наименование:" variable = "n_name" />
             <query able = "true" assign_name = "Авторы (ПГУ):" variable = "n_psu_authors" />
+            <query able = "true" assign_name = "Участники (ПГУ):" variable = "n_parters" />
             <query able = "true" assign_name = "Название:" variable = "n_name" />
             <query able = "true" assign_name = "Владелец:" variable = "n_owner" />
             <query able = "true" assign_name = "Тип:" variable = "n_type" />

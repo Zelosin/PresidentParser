@@ -14,6 +14,7 @@ public class ScienceWork {
     public Map<String, String> mScienceWorkInformation = new HashMap<String, String>();
     protected String mScienceWorkLink;
     public boolean isVerified = true;
+    public boolean hasDuplicate = true;
 
     public void parse(){};
 
@@ -27,28 +28,28 @@ public class ScienceWork {
         return mScienceWorkLink;
     }
 
-    public static void parsePSUScienceWorkPage(ScienceWork tScienceWork, QueryTypeAction pQueryType, BasicServicesCompiler pBasicCompiler){
-        Document mCurrentDocument = PSUService.makeJSOUPQuery(tScienceWork.getmScienceWorkLink());
+    public void parsePSUScienceWorkPage( QueryTypeAction pQueryType, BasicServicesCompiler pBasicCompiler){
+        Document mCurrentDocument = PSUService.makeJSOUPQuery(this.getmScienceWorkLink());
         String tKey;
 
-        tScienceWork.mScienceWorkInformation.put(pBasicCompiler.mQueryConfigurationsAssumer.getVariable(pQueryType, "Наименование:"), mCurrentDocument.select("h1").last().text());
+        this.mScienceWorkInformation.put(pBasicCompiler.mQueryConfigurationsAssumer.getVariable(pQueryType, "Наименование:"), mCurrentDocument.select("h1").last().text());
 
         for (Element tTableElement : mCurrentDocument.select("tr")) {
             tKey = tTableElement.select("td").first().text();
-            if (tKey.equals("Авторы (ПГУ):")) {
-                tScienceWork.mScienceWorkInformation.put(
+            if (tKey.equals("Авторы (ПГУ):") || tKey.equals("Участники (ПГУ):")) {
+                this.mScienceWorkInformation.put(
                         pBasicCompiler.mQueryConfigurationsAssumer.getVariable(pQueryType, tKey),
                         tTableElement.select("td").last().text().replaceAll("\\s\\[\\d+\\]", "")
                 );
                 continue;
             }
             if (tKey.equals("Место хранения:") || tKey.equals("Категория:"))
-                tScienceWork.mScienceWorkInformation.put(
+                this.mScienceWorkInformation.put(
                         pBasicCompiler.mQueryConfigurationsAssumer.getVariable(pQueryType, tKey),
                         tTableElement.select("td").last().previousElementSibling().text()
                 );
             else
-                tScienceWork.mScienceWorkInformation.put(
+                this.mScienceWorkInformation.put(
                         pBasicCompiler.mQueryConfigurationsAssumer.getVariable(pQueryType, tKey),
                         tTableElement.select("td").last().text()
                 );

@@ -42,7 +42,7 @@ public class PSUService{
 
         @Override
         public void run() {
-            ScienceWork.parsePSUScienceWorkPage(mCurrentScienceWork, mQueryType, mBasicServiceCompiler);
+            mCurrentScienceWork.parsePSUScienceWorkPage(mQueryType, mBasicServiceCompiler);
         }
     }
 
@@ -115,14 +115,6 @@ public class PSUService{
                 tMember.setmPSUProfileLink(mDepartmentMember.select("a").last().attr("href"));
         }
 
-        /*if(DepartmentMemberInformation.mAssignedProfileCount != DepartmentMembersAssumer.mDepartmentMembersList.size()) {
-            mGroupsListDocument = PSUService.makeJSOUPQuery(QueryConfigurationsAssumer.mGroupListLink);
-            DepartmentMembersAssumer.mDepartmentMembersList.forEach((key, value) -> {
-                if (value.getPSUProfileLink() == null)
-                    getPersonProfileLinkFromGroupList(value);
-            });
-        }*/
-
         ArrayList<Thread> mAsyncParseThreadArrayList = new ArrayList<>();
         mBasicServiceCompiler.mDepartmentMembersAssumer.mDepartmentMembersList.forEach((key, value) ->{
             Thread tThread = new Thread(new AsyncPSUProfilePageParseTask(value, pQueryType));
@@ -139,7 +131,7 @@ public class PSUService{
 
     }
 
-    public  void assignScienceWorksToDepartmentMember(QueryTypeAction pQueryType, DepartmentMember tDepartmentMember) {
+    public void assignScienceWorksToDepartmentMember(QueryTypeAction pQueryType, DepartmentMember tDepartmentMember) {
         mMemberWorksDocument = PSUService.makeJSOUPQuery(tDepartmentMember.getmPSUProfileLink());
 
         ArrayList tSectionArray = tDepartmentMember.getSectionArray(QueryTypeAction.Basic, "b_psu_profile_basic_information");
@@ -203,16 +195,18 @@ public class PSUService{
         Document tWorkDocument;
         for (Element tWorkType : tWorkElements) {
             AJAXConfiguration tAJAXParam = (mBasicServiceCompiler.mAjaxConfigurationsAssumer.mAJAXConfigurationsList.get(pQueryType)).get(tWorkType.text());
-            tWorkDocument = PSUService.makeAJAXQueryForDepartmentMember(
-                    tDepartmentMember.getmPSUProfileID(),
-                    tAJAXParam.getmURLPart()
-            );
-            for (Element tWork : tWorkDocument.select(".showed"
-                    +pQueryType.ordinal()
-                    +"-"
-                    + (tAJAXParam.getmURLPart()).replaceAll("\\D+","").substring(1)
-            ))
-                tDepartmentMember.getSectionArray(pQueryType, tAJAXParam.getmVariableName()).add(new ScienceWork(tWork.select("a").first().attr("href")));
+            if( tAJAXParam != null) {
+                tWorkDocument = PSUService.makeAJAXQueryForDepartmentMember(
+                        tDepartmentMember.getmPSUProfileID(),
+                        tAJAXParam.getmURLPart()
+                );
+                for (Element tWork : tWorkDocument.select(".showed"
+                        + pQueryType.ordinal()
+                        + "-"
+                        + (tAJAXParam.getmURLPart()).replaceAll("\\D+", "").substring(1)
+                ))
+                    tDepartmentMember.getSectionArray(pQueryType, tAJAXParam.getmVariableName()).add(new ScienceWork(tWork.select("a").first().attr("href")));
+            }
         }
     }
 
@@ -236,7 +230,7 @@ public class PSUService{
         });
     }
 
-    public  void parseScienceWorkPageByQueryType(QueryTypeAction pQueryType){
+    public void parseScienceWorkPageByQueryType(QueryTypeAction pQueryType){
         if(pQueryType.equals(QueryTypeAction.ALL)){
             mBasicServiceCompiler.mDepartmentMembersAssumer.mDepartmentMembersList.forEach((tName, tMember) -> {
                 parseScienceWorkPageByQueryType(QueryTypeAction.Resource, tMember);
