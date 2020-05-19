@@ -77,7 +77,7 @@ public class PSUService{
                     .ignoreHttpErrors(true)
                     .get();
         } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
+            return null;
         }
         return mReturningDocument;
     }
@@ -133,6 +133,8 @@ public class PSUService{
 
     public void assignScienceWorksToDepartmentMember(QueryTypeAction pQueryType, DepartmentMember tDepartmentMember) {
         mMemberWorksDocument = PSUService.makeJSOUPQuery(tDepartmentMember.getmPSUProfileLink());
+        if(mMemberWorksDocument == null)
+            return;
 
         ArrayList tSectionArray = tDepartmentMember.getSectionArray(QueryTypeAction.Basic, "b_psu_profile_basic_information");
         ScienceWork tBasicInformation = new ScienceWork();

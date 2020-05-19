@@ -46,7 +46,7 @@ sheetsSettings = new Vue({
                 {
                     selectedQueryType : "Resource",
                     selectedVariable: "",
-                    selectedSection : "",
+                    selectedSection : [],
                     selectedCellType : "Cell",
                     cellText: "",
                     rowNumber: 0,

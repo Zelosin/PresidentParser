@@ -61,6 +61,7 @@ public class ProcessingSample {
         //loadConfigFile( null );
     }
 
+
     public String getmOutputFileName() {
         return mOutputFileName;
     }

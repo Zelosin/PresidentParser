@@ -3,6 +3,7 @@ package org.zelosin.Assumers;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.zelosin.Assumers.Abstract.Assumer;
+import org.zelosin.Assumers.AssumersComponents.AJAXConfiguration;
 import org.zelosin.Assumers.AssumersComponents.SheetConfiguration;
 import org.zelosin.Assumers.AssumersComponents.SheetsComponents.SheetFilter;
 import org.zelosin.Assumers.AssumersComponents.SheetsComponents.SimpleLabel;
@@ -14,6 +15,8 @@ import org.zelosin.Configurations.Query.QueryTypeAction;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 public class SheetConfigurationsAssumer implements Assumer {
@@ -43,11 +46,17 @@ public class SheetConfigurationsAssumer implements Assumer {
                                 TableFormConfigurations configurations = new TableFormConfigurations(
                                         (String)((JSONObject)sheetConfig).get("cellText"),
                                         QueryTypeAction.valueOf((String)((JSONObject)sheetConfig).get("selectedQueryType")),
-                                        (String)((JSONObject)sheetConfig).get("selectedSection"),
+                                        null,
                                         (String)((JSONObject)sheetConfig).get("selectedVariable"),
                                         (Integer) (((JSONObject)sheetConfig)).get("columnNumber"),
                                         (Integer) (((JSONObject)sheetConfig)).get("rowNumber"),
                                         null);
+                                List<String> selectedSections = new ArrayList<>();
+                                ((JSONArray)((JSONObject)sheetConfig).get("selectedSection")).forEach(json ->{
+                                    selectedSections.add((String)((JSONObject)json).get("variable"));
+                                });
+                                configurations.setmSectionName(String.join("::", selectedSections));
+
                                 if(!(((JSONObject)sheetConfig).get("filterType")).equals("NoFilter")) {
                                     try {
                                         if (((JSONObject) sheetConfig).get("filterType").equals("DateCompare")) {
@@ -110,6 +119,10 @@ public class SheetConfigurationsAssumer implements Assumer {
 
     @Override
     public JSONObject provideContent() {
+        return null;
+    }
+
+    public JSONObject provideContent(AJAXConfigurationsAssumer ajaxAssumer) {
 
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -123,7 +136,23 @@ public class SheetConfigurationsAssumer implements Assumer {
                 JSONObject sheetConfig = new JSONObject();
                 sheetConfig.put("selectedCellType", "Cell");
                 sheetConfig.put("selectedVariable", tableConfig.getmVariable());
-                sheetConfig.put("selectedSection", tableConfig.getmSectionName());
+                //sheetConfig.put("selectedSection", tableConfig.getmSectionName());
+
+
+                JSONArray sectionsArray = new JSONArray();
+                for(String section : tableConfig.getmSectionName().split("::")){
+                    JSONObject processingSection = new JSONObject();
+                    HashMap<String, AJAXConfiguration> ajaxMap = ajaxAssumer.mAJAXConfigurationsList.get(tableConfig.getmQueryType());
+                    ajaxMap.forEach((key, value) ->{
+                        if(value.getmVariableName().equals(section)){
+                            processingSection.put("sectionName", value.getmAssignName());
+                            processingSection.put("variable", value.getmVariableName());
+                            sectionsArray.put(processingSection);
+                        }
+                    });
+                }
+
+                sheetConfig.put("selectedSection", sectionsArray);
                 sheetConfig.put("cellText", tableConfig.getmDisplayText());
                 sheetConfig.put("rowNumber", tableConfig.getmDisplayRow());
                 sheetConfig.put("columnNumber", tableConfig.getmDisplayColumn());

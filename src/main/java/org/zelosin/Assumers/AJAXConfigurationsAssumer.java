@@ -35,15 +35,18 @@ public class AJAXConfigurationsAssumer implements Assumer {
     public JSONArray provideAJAXContent() {
         JSONArray returningList = new JSONArray();
         for (QueryTypeAction queryType : QueryTypeAction.values()) {
+            JSONArray queryList = new JSONArray();
             if(!mAJAXConfigurationsList.get(queryType).isEmpty()) {
-                JSONObject processingJSON = new JSONObject();
                 mAJAXConfigurationsList.get(queryType).forEach(
                         (key, value) -> {
-                            processingJSON.put(key, value.getmVariableName());
+                            JSONObject processingJSON = new JSONObject();
+                            processingJSON.put("sectionName", key);
+                            processingJSON.put("variable", value.getmVariableName());
+                            queryList.put(processingJSON);
                         }
                 );
-                returningList.put(processingJSON);
             }
+            returningList.put(queryList);
         }
         return returningList;
     }

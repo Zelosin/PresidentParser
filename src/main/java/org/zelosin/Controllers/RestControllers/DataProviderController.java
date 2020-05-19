@@ -37,7 +37,7 @@ public class DataProviderController {
                     break;
                 }
                 case ("sheets"):{
-                    retunrningObject = tProcessingSample.mBasicServicesCompiler.mSheetConfigurationsAssumer.provideContent();
+                    retunrningObject = tProcessingSample.mBasicServicesCompiler.mSheetConfigurationsAssumer.provideContent(tProcessingSample.mBasicServicesCompiler.mAjaxConfigurationsAssumer);
                     break;
                 }
                 case ("params"):{

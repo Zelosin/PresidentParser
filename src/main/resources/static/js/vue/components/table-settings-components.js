@@ -3,11 +3,12 @@ Vue.component('query-settings', {
     data: function () {
         return {
             variablesArray : {},
-            sectionsArray : {},
+            sectionsArray : [],
             actionsArray : {},
             compareValue : ""
         }
     },
+    components: { Multiselect: window.VueMultiselect.default },
     template:
         `
           <div class = "card p-3 pb-4 mb-3">
@@ -16,6 +17,7 @@ Vue.component('query-settings', {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
+            
 
 
             <form>
@@ -45,24 +47,31 @@ Vue.component('query-settings', {
 
               </div>
               <div class="form-row" v-if="conf.selectedCellType === 'Cell'">
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-2">
                   <label>Тип столбца</label>
                   <select  @change="changelst" v-model="conf.selectedQueryType" class="form-control" >
                     <option selected value="Resource">Ресурсы</option>
                     <option value="Document">Документы</option>
-                    <option value="NIR">Научно исследовательские работы</option>
-                    <option value="RID">Результаты интеллектуальной деятельности</option>
+                    <option value="NIR">НИР</option>
+                    <option value="RID">РИД</option>
                   </select>
                 </div>
 
-                <div class="form-group col-md-4">
-                  <label>Секция</label>
-                  <select v-model="conf.selectedSection" class="form-control" >
-                    <option v-for="(item, key) in sectionsArray" :value="item">
-                      {{key}}
-                    </option>
-                  </select>
+                <div class="form-group col-md-6">
+                  <label>Секции</label>                           
+                    <multiselect
+                      height="36"
+                      v-model="conf.selectedSection"
+                      placeholder="Имя секции"
+                      label="sectionName" track-by="sectionName"
+                      :options="sectionsArray"
+                      :multiple="true"
+                      :taggable="true"
+                    ></multiselect>          
                 </div>
+                
+                
+                
                 <div class="form-group col-md-4">
                   <label>Значение</label>
                   <select v-model="conf.selectedVariable" class="form-control" >
@@ -129,29 +138,34 @@ Vue.component('query-settings', {
           </div>
           `,
     methods: {
-        changelst: function () {
+        setArrays: function(){
             switch (this.conf.selectedQueryType) {
                 case "Resource":{
                     this.variablesArray = queryInfo[0];
-                    this.sectionsArray = sectionInfo[0];
+                    this.sectionsArray = sectionInfo[1];
                     break;
                 }
                 case "Document":{
                     this.variablesArray = queryInfo[1];
-                    this.sectionsArray = sectionInfo[1];
+                    this.sectionsArray = sectionInfo[2];
                     break;
                 }
                 case "NIR":{
                     this.variablesArray = queryInfo[2];
-                    this.sectionsArray = sectionInfo[2];
+                    this.sectionsArray = sectionInfo[3];
                     break;
                 }
                 case "RID":{
                     this.variablesArray = queryInfo[3];
-                    this.sectionsArray = sectionInfo[3];
+                    this.sectionsArray = sectionInfo[4];
                     break;
                 }
             }
+        },
+
+        changelst: function () {
+            this.conf.selectedSection = [];
+            this.setArrays();
         },
         deleteConf: function(){
             sheetsSettings.configsList.splice(sheetsSettings.configsList.indexOf(this.conf), 1);
@@ -191,7 +205,7 @@ Vue.component('query-settings', {
         },
     },
     mounted : function (){
-        this.changelst();
+        this.setArrays();
         this.changeFilterType();
     },
 });

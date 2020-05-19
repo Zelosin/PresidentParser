@@ -43,6 +43,10 @@ public class TableFormConfigurations{
         this.mQueryType = mQueryType;
     }
 
+    public void setmSectionName(String mSectionName) {
+        this.mSectionName = mSectionName;
+    }
+
     public boolean verifyScienceWork(ScienceWork pScienceWork) throws NullPointerException {
             if(mValueFilter == null)
                 return true;
