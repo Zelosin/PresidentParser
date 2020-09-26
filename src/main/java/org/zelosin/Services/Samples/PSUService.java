@@ -65,6 +65,8 @@ public class PSUService{
     }
 
     public static synchronized Document makeJSOUPQuery(String pURL) {
+        if(pURL == null)
+            return null;
         Document mReturningDocument = null;
         if(!pURL.contains("https") && (pURL.contains("http")))
             pURL = pURL.replaceFirst("http", "https");
@@ -147,7 +149,8 @@ public class PSUService{
             else if(tProfileLink.contains("scopus")) tBasicInformation.mScienceWorkInformation.put("b_scopus_link", tProfileLink);
             else if(tProfileLink.contains("publons")) tBasicInformation.mScienceWorkInformation.put("b_publons_link", tProfileLink);
         }
-
+        if(mMemberWorksDocument == null)
+            return;
         Elements tWorkElements = mMemberWorksDocument.select(".ru_wrapper_user_row").select(".w-75");
         tBasicInformation.mScienceWorkInformation.put("b_academic_degree", tWorkElements.get(0).text());
         tBasicInformation.mScienceWorkInformation.put("b_academic_rank", tWorkElements.get(1).text());
